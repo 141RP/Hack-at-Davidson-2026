@@ -1,0 +1,1 @@
+This is our first version of the README for Hack@Davidson.
