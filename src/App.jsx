@@ -27,9 +27,21 @@ function AuthenticatedApp() {
   )
 }
 
-export default function App() {
-  const { user } = useAuth()
+function LoadingScreen() {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500">
+      <div className="text-center text-white">
+        <div className="text-5xl mb-4 animate-bounce">🧳</div>
+        <p className="text-lg font-medium opacity-80">Loading...</p>
+      </div>
+    </div>
+  )
+}
 
+export default function App() {
+  const { user, loading } = useAuth()
+
+  if (loading) return <LoadingScreen />
   if (!user) return <Login />
 
   return <AuthenticatedApp />

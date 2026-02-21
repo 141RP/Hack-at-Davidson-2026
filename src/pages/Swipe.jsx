@@ -7,7 +7,6 @@ export default function Swipe() {
   const [isDragging, setIsDragging] = useState(false)
   const [exitDirection, setExitDirection] = useState(null)
   const startX = useRef(0)
-  const cardRef = useRef(null)
 
   if (!currentDestination) {
     const rightSwipes = Object.entries(swipeResults).filter(([, dir]) => dir === 'right')
@@ -22,13 +21,13 @@ export default function Swipe() {
             <div className="space-y-2">
               {rightSwipes.map(([destId]) => {
                 const dest = destinations.find(d => d.id === destId)
-                return (
+                return dest ? (
                   <div key={destId} className="flex items-center gap-3 p-3 bg-success/10 rounded-2xl">
-                    <img src={dest?.image} alt="" className="w-12 h-12 rounded-xl object-cover" />
-                    <span className="font-medium text-sm">{dest?.name}</span>
+                    <img src={dest.image} alt="" className="w-12 h-12 rounded-xl object-cover" />
+                    <span className="font-medium text-sm">{dest.name}</span>
                     <span className="ml-auto text-success text-lg">✓</span>
                   </div>
-                )
+                ) : null
               })}
             </div>
           </div>
@@ -90,9 +89,7 @@ export default function Swipe() {
         </span>
       </div>
 
-      {/* Card */}
       <div
-        ref={cardRef}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
@@ -110,29 +107,19 @@ export default function Swipe() {
           className="w-full h-full object-cover pointer-events-none"
           draggable={false}
         />
-
-        {/* Gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
 
-        {/* Swipe indicators */}
         {dragX > 30 && (
-          <div
-            className="absolute top-8 left-6 border-4 border-success text-success px-4 py-2 rounded-xl text-2xl font-extrabold -rotate-12"
-            style={{ opacity }}
-          >
+          <div className="absolute top-8 left-6 border-4 border-success text-success px-4 py-2 rounded-xl text-2xl font-extrabold -rotate-12" style={{ opacity }}>
             LIKE
           </div>
         )}
         {dragX < -30 && (
-          <div
-            className="absolute top-8 right-6 border-4 border-accent text-accent px-4 py-2 rounded-xl text-2xl font-extrabold rotate-12"
-            style={{ opacity }}
-          >
+          <div className="absolute top-8 right-6 border-4 border-accent text-accent px-4 py-2 rounded-xl text-2xl font-extrabold rotate-12" style={{ opacity }}>
             NOPE
           </div>
         )}
 
-        {/* Info */}
         <div className="absolute bottom-0 left-0 right-0 p-5 text-white">
           <h2 className="text-2xl font-bold mb-1">{currentDestination.name}</h2>
           <p className="text-sm text-white/80 mb-3 line-clamp-2">{currentDestination.description}</p>
@@ -156,7 +143,6 @@ export default function Swipe() {
         </div>
       </div>
 
-      {/* Action buttons */}
       <div className="flex items-center gap-6 mt-6">
         <button
           onClick={() => handleButtonSwipe('left')}

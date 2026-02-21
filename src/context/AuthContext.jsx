@@ -1,27 +1,54 @@
-import { createContext, useContext, useState, useCallback } from 'react'
-import { USERS } from '../data/mockData'
+import { createContext, useContext, useState, useEffect, useCallback } from 'react'
+import { onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth'
+import { doc, setDoc, getDoc } from 'firebase/firestore'
+import { auth, db, googleProvider } from '../firebase'
 
 const AuthContext = createContext(null)
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(() => {
-    const saved = localStorage.getItem('wanderswipe_user')
-    return saved ? JSON.parse(saved) : null
-  })
+  const [user, setUser] = useState(null)
+  const [loading, setLoading] = useState(true)
 
-  const login = useCallback(() => {
-    const currentUser = USERS.u1
-    setUser(currentUser)
-    localStorage.setItem('wanderswipe_user', JSON.stringify(currentUser))
+  useEffect(() => {
+    const unsub = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (firebaseUser) {
+        const userRef = doc(db, 'users', firebaseUser.uid)
+        const userData = {
+          name: firebaseUser.displayName || 'User',
+          email: firebaseUser.email,
+          avatar: firebaseUser.photoURL || `https://api.dicebear.com/9.x/adventurer/svg?seed=${firebaseUser.uid}`,
+        }
+
+        const snap = await getDoc(userRef)
+        if (!snap.exists()) {
+          await setDoc(userRef, { ...userData, createdAt: Date.now() })
+        } else {
+          await setDoc(userRef, userData, { merge: true })
+        }
+
+        setUser({ id: firebaseUser.uid, ...userData })
+      } else {
+        setUser(null)
+      }
+      setLoading(false)
+    })
+    return unsub
   }, [])
 
-  const logout = useCallback(() => {
-    setUser(null)
-    localStorage.removeItem('wanderswipe_user')
+  const login = useCallback(async () => {
+    try {
+      await signInWithPopup(auth, googleProvider)
+    } catch (err) {
+      console.error('Login failed:', err)
+    }
+  }, [])
+
+  const logout = useCallback(async () => {
+    await signOut(auth)
   }, [])
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, logout }}>
       {children}
     </AuthContext.Provider>
   )

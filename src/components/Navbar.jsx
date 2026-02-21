@@ -38,7 +38,6 @@ export default function Navbar() {
 
   return (
     <>
-      {/* Desktop: top bar */}
       <nav className="hidden md:flex fixed top-0 left-0 right-0 z-50 h-16 bg-white/80 backdrop-blur-xl border-b border-gray-200 items-center justify-between px-6">
         <div className="flex items-center gap-2">
           <span className="text-2xl">🧳</span>
@@ -63,11 +62,10 @@ export default function Navbar() {
           ))}
         </div>
         <div className="flex items-center gap-3">
-          <img src={user.avatar} alt="" className="w-8 h-8 rounded-full bg-gray-200" />
+          <img src={user.avatar} alt="" className="w-8 h-8 rounded-full bg-gray-200" referrerPolicy="no-referrer" />
         </div>
       </nav>
 
-      {/* Mobile: bottom bar */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-t border-gray-200 pb-[env(safe-area-inset-bottom)]">
         <div className="flex items-center justify-around h-16">
           {navItems.map(item => (

@@ -11,10 +11,9 @@ export default function Profile() {
 
   return (
     <div className="max-w-lg mx-auto px-4 pt-4 md:pt-6 pb-24">
-      {/* Profile card */}
       <div className="bg-gradient-to-br from-primary to-primary-dark rounded-3xl p-6 text-white mb-6">
         <div className="flex items-center gap-4">
-          <img src={user.avatar} alt="" className="w-16 h-16 rounded-2xl bg-white/20 border-2 border-white/30" />
+          <img src={user.avatar} alt="" className="w-16 h-16 rounded-2xl bg-white/20 border-2 border-white/30" referrerPolicy="no-referrer" />
           <div>
             <h1 className="text-xl font-bold">{user.name}</h1>
             <p className="text-white/70 text-sm">{user.email}</p>
@@ -37,7 +36,6 @@ export default function Profile() {
         </div>
       </div>
 
-      {/* Liked destinations */}
       {rightSwipes.length > 0 && (
         <div className="mb-6">
           <h2 className="font-semibold text-lg mb-3">Liked Destinations</h2>
@@ -65,25 +63,23 @@ export default function Profile() {
         </div>
       )}
 
-      {/* Trip groups */}
-      <div className="mb-6">
-        <h2 className="font-semibold text-lg mb-3">Your Trip Groups</h2>
-        <div className="space-y-2">
-          {groupChats.map(chat => (
-            <div key={chat.id} className="flex items-center gap-3 p-3 bg-white rounded-2xl shadow-sm border border-gray-100">
-              <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-lg">
-                {chat.name.includes('🌴') ? '🌴' : '✈️'}
+      {groupChats.length > 0 && (
+        <div className="mb-6">
+          <h2 className="font-semibold text-lg mb-3">Your Trip Groups</h2>
+          <div className="space-y-2">
+            {groupChats.map(chat => (
+              <div key={chat.id} className="flex items-center gap-3 p-3 bg-white rounded-2xl shadow-sm border border-gray-100">
+                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-lg">✈️</div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-semibold text-sm truncate">{chat.name || 'Group Chat'}</h3>
+                  <p className="text-xs text-text-secondary">{chat.members.length} members</p>
+                </div>
               </div>
-              <div className="flex-1 min-w-0">
-                <h3 className="font-semibold text-sm truncate">{chat.name}</h3>
-                <p className="text-xs text-text-secondary">{chat.members.length} members</p>
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
-      {/* Settings */}
       <div className="mb-6">
         <h2 className="font-semibold text-lg mb-3">Settings</h2>
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
