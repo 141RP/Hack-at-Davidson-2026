@@ -26,12 +26,31 @@ Emergencies: Always prioritize local emergency contact info for safety queries.
 Visas: Provide general requirements but include a mandatory disclaimer to check official government portals.
 `
 
-export async function askGemini(question) {
+export async function askGemini(question, chatHistory = [], notepadEntries = []) {
   const model = genAI.getGenerativeModel({
     model: 'gemini-2.5-flash',
     systemInstruction: SYSTEM_PROMPT,
   })
-  const result = await model.generateContent(question)
+
+  let prompt = ''
+
+  if (notepadEntries.length > 0) {
+    const notesBlock = notepadEntries
+      .map(n => `[${n.title}]: ${n.content}`)
+      .join('\n\n')
+    prompt += `Here is the group's Trip Notepad (saved plans, itineraries, and notes). Reference this when relevant:\n---\n${notesBlock}\n---\n\n`
+  }
+
+  if (chatHistory.length > 0) {
+    const historyBlock = chatHistory
+      .map(m => `${m.name}: ${m.text}`)
+      .join('\n')
+    prompt += `Here is the recent group chat conversation for context:\n---\n${historyBlock}\n---\n\n`
+  }
+
+  prompt += `Now answer this question from the user: ${question}`
+
+  const result = await model.generateContent(prompt)
   return result.response.text()
 }
 
