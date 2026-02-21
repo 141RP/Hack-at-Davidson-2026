@@ -63,8 +63,7 @@ export default function Navbar() {
     <>
       <nav className="hidden md:flex fixed top-0 left-0 right-0 z-50 h-16 bg-white/80 backdrop-blur-xl border-b border-gray-200 items-center justify-between px-6">
         <div className="flex items-center gap-2">
-          <span className="text-2xl">🧳</span>
-          <span className="font-bold text-xl bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">WanderSwipe</span>
+          <img src="/explor-logo.png" alt="EXPLOR" className="h-8" />
         </div>
         <div className="flex items-center gap-1">
           {navItems.map(item => (

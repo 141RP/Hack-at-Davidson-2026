@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react'
+import { createContext, useContext, useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import {
   collection, query, where, orderBy,
   onSnapshot, addDoc, updateDoc, doc, getDoc, getDocs, setDoc, deleteDoc,
@@ -190,6 +190,39 @@ export function AppProvider({ children }) {
     return []
   }, [])
 
+  const [friendSwipes, setFriendSwipes] = useState({})
+  const loadedFriendSwipes = useRef(new Set())
+
+  useEffect(() => {
+    for (const fid of friends) {
+      if (!loadedFriendSwipes.current.has(fid)) {
+        loadedFriendSwipes.current.add(fid)
+        getUserSwipes(fid).then(swipes => {
+          setFriendSwipes(prev => ({ ...prev, [fid]: swipes }))
+        })
+      }
+    }
+  }, [friends, getUserSwipes])
+
+  const tripMatches = useMemo(() => {
+    if (!user || friends.length === 0) return []
+    const myLiked = Object.entries(swipeResults)
+      .filter(([, dir]) => dir === 'right')
+      .map(([id]) => id)
+
+    const matches = []
+    for (const destId of myLiked) {
+      const friendsWhoLiked = friends.filter(fid => friendSwipes[fid]?.[destId] === 'right')
+      if (friendsWhoLiked.length > 0) {
+        const dest = DESTINATIONS.find(d => d.id === destId)
+        if (dest) {
+          matches.push({ destination: dest, friendIds: friendsWhoLiked })
+        }
+      }
+    }
+    return matches
+  }, [swipeResults, friends, friendSwipes, user])
+
   const sendMessage = useCallback(async (conversationId, text) => {
     if (!user) return
     const now = Date.now()
@@ -222,23 +255,25 @@ export function AppProvider({ children }) {
     await updateDoc(doc(db, 'conversations', conversationId), { name })
   }, [])
 
-  const createConversation = useCallback(async (name, type, memberIds) => {
+  const createConversation = useCallback(async (name, type, memberIds, { skipDedup = false } = {}) => {
     if (!user) return null
     const base = [user.id, ...memberIds]
     if (type === 'group') base.push(GEMINI_USER_ID)
     const allMembers = [...new Set(base)]
     const sortedNew = [...allMembers].sort()
 
-    const q = query(
-      collection(db, 'conversations'),
-      where('members', 'array-contains', user.id),
-    )
-    const snap = await getDocs(q)
-    for (const d of snap.docs) {
-      const sortedExisting = [...(d.data().members || [])].sort()
-      if (sortedExisting.length === sortedNew.length &&
-          sortedExisting.every((id, i) => id === sortedNew[i])) {
-        return d.id
+    if (!skipDedup) {
+      const q = query(
+        collection(db, 'conversations'),
+        where('members', 'array-contains', user.id),
+      )
+      const snap = await getDocs(q)
+      for (const d of snap.docs) {
+        const sortedExisting = [...(d.data().members || [])].sort()
+        if (sortedExisting.length === sortedNew.length &&
+            sortedExisting.every((id, i) => id === sortedNew[i])) {
+          return d.id
+        }
       }
     }
 
@@ -297,6 +332,8 @@ export function AppProvider({ children }) {
       updateBio,
       getUserSwipes,
       getUserFriends,
+      friendSwipes,
+      tripMatches,
     }}>
       {children}
     </AppContext.Provider>

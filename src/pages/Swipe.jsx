@@ -1,25 +1,12 @@
-import { useState, useRef, useEffect, useMemo } from 'react'
+import { useState, useRef, useMemo } from 'react'
 import { useApp } from '../context/AppContext'
 
 export default function Swipe() {
-  const { currentDestination, swipe, currentDestIdx, totalDestinations, swipeResults, destinations, friends, users, getUserSwipes } = useApp()
+  const { currentDestination, swipe, currentDestIdx, totalDestinations, swipeResults, destinations, friends, users, friendSwipes } = useApp()
   const [dragX, setDragX] = useState(0)
   const [isDragging, setIsDragging] = useState(false)
   const [exitDirection, setExitDirection] = useState(null)
   const startX = useRef(0)
-  const [friendSwipes, setFriendSwipes] = useState({})
-  const loadedFriends = useRef(new Set())
-
-  useEffect(() => {
-    for (const fid of friends) {
-      if (!loadedFriends.current.has(fid)) {
-        loadedFriends.current.add(fid)
-        getUserSwipes(fid).then(swipes => {
-          setFriendSwipes(prev => ({ ...prev, [fid]: swipes }))
-        })
-      }
-    }
-  }, [friends, getUserSwipes])
 
   const unlikedDests = useMemo(() => {
     return destinations.filter(d => swipeResults[d.id] === 'left')

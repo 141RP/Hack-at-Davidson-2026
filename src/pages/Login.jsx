@@ -6,10 +6,7 @@ export default function Login() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 p-6">
       <div className="bg-white rounded-3xl shadow-2xl p-8 sm:p-12 max-w-md w-full text-center">
-        <div className="text-6xl mb-4">🧳</div>
-        <h1 className="text-4xl font-extrabold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent mb-2">
-          WanderSwipe
-        </h1>
+        <img src="/explor-logo.png" alt="EXPLOR" className="h-16 mx-auto mb-4" />
         <p className="text-text-secondary text-lg mb-8">
           Swipe your way to the perfect group trip
         </p>

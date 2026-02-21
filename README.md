@@ -1,4 +1,4 @@
-# WanderSwipe
+# EXPLOR
 
 Tinder-style group travel planning app. Swipe on destinations with friends to find the perfect trip.
 

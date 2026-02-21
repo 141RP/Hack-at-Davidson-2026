@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { useApp } from '../context/AppContext'
 import { useAuth } from '../context/AuthContext'
+import { GEMINI_USER_ID } from '../services/gemini'
 import ChatView from '../components/ChatView'
 import NewChatModal from '../components/NewChatModal'
 
@@ -16,11 +17,24 @@ function timeAgo(ts) {
 }
 
 export default function Home() {
-  const { conversations, users, loading, leaveConversation } = useApp()
+  const { conversations, users, loading, leaveConversation, tripMatches, createConversation } = useApp()
   const { user } = useAuth()
   const [activeChat, setActiveChat] = useState(null)
   const [showNewChat, setShowNewChat] = useState(false)
   const [deleteTarget, setDeleteTarget] = useState(null)
+  const [dismissed, setDismissed] = useState(new Set())
+  const [creatingMatch, setCreatingMatch] = useState(null)
+  const [showMatches, setShowMatches] = useState(false)
+
+  const visibleMatches = useMemo(() => {
+    return tripMatches.filter(match => {
+      if (dismissed.has(match.destination.id)) return false
+      const tripName = `${match.destination.name} Trip`
+      return !conversations.some(conv =>
+        conv.type === 'group' && conv.name === tripName
+      )
+    })
+  }, [tripMatches, dismissed, conversations])
 
   if (activeChat) {
     return <ChatView conversation={activeChat} onBack={() => setActiveChat(null)} />
@@ -55,6 +69,110 @@ export default function Home() {
           />
         </div>
       </div>
+
+      {visibleMatches.length > 0 && !loading && (
+        <div className="px-4 pb-2">
+          {!showMatches ? (
+            <button
+              onClick={() => setShowMatches(true)}
+              className="w-full flex items-center justify-between p-3.5 bg-gradient-to-r from-primary/10 to-accent/10 rounded-2xl border border-primary/20 hover:from-primary/15 hover:to-accent/15 transition cursor-pointer"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center text-lg">🎉</div>
+                <div className="text-left">
+                  <p className="text-sm font-bold text-text-primary">
+                    You have {visibleMatches.length} trip match{visibleMatches.length !== 1 ? 'es' : ''}!
+                  </p>
+                  <p className="text-xs text-text-secondary">Tap to see destinations your friends also liked</p>
+                </div>
+              </div>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 text-primary flex-shrink-0">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+              </svg>
+            </button>
+          ) : (
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <h2 className="text-xs font-semibold text-text-secondary uppercase tracking-wide">Trip Matches ({visibleMatches.length})</h2>
+                <button
+                  onClick={() => setShowMatches(false)}
+                  className="text-xs font-medium text-primary hover:text-primary-dark transition cursor-pointer"
+                >
+                  Hide
+                </button>
+              </div>
+              <div className="space-y-2">
+                {visibleMatches.map(match => {
+                  const friendNames = match.friendIds
+                    .map(id => users[id]?.name?.split(' ')[0])
+                    .filter(Boolean)
+                  const nameStr = friendNames.length === 1
+                    ? friendNames[0]
+                    : friendNames.length === 2
+                    ? `${friendNames[0]} & ${friendNames[1]}`
+                    : `${friendNames[0]}, ${friendNames[1]} & ${friendNames.length - 2} more`
+
+                  return (
+                    <div key={match.destination.id} className="relative bg-gradient-to-r from-primary/10 to-accent/10 rounded-2xl p-3.5 border border-primary/20">
+                      <button
+                        onClick={() => setDismissed(prev => new Set(prev).add(match.destination.id))}
+                        className="absolute top-2.5 right-2.5 p-1 rounded-lg hover:bg-black/5 transition cursor-pointer text-text-secondary"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                      <div className="flex items-center gap-3">
+                        <img
+                          src={match.destination.image}
+                          alt=""
+                          className="w-14 h-14 rounded-xl object-cover flex-shrink-0"
+                        />
+                        <div className="flex-1 min-w-0 pr-6">
+                          <p className="text-xs font-semibold text-primary uppercase tracking-wide">Trip Match!</p>
+                          <p className="text-sm font-bold text-text-primary truncate">{match.destination.name}</p>
+                          <p className="text-xs text-text-secondary mt-0.5">
+                            You and {nameStr} all liked this
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 mt-3">
+                        <div className="flex -space-x-2 flex-shrink-0">
+                          <img src={user.avatar} alt="" className="w-6 h-6 rounded-full border-2 border-white" referrerPolicy="no-referrer" />
+                          {match.friendIds.slice(0, 3).map(fid => (
+                            <img key={fid} src={users[fid]?.avatar} alt="" className="w-6 h-6 rounded-full border-2 border-white" referrerPolicy="no-referrer" />
+                          ))}
+                        </div>
+                        <button
+                          onClick={async () => {
+                            setCreatingMatch(match.destination.id)
+                            const groupName = `${match.destination.name} Trip`
+                            const convId = await createConversation(groupName, 'group', match.friendIds, { skipDedup: true })
+                            setCreatingMatch(null)
+                            if (convId) {
+                              const conv = conversations.find(c => c.id === convId) || {
+                                id: convId,
+                                name: groupName,
+                                type: 'group',
+                                members: [user.id, ...match.friendIds, GEMINI_USER_ID],
+                              }
+                              setActiveChat(conv)
+                            }
+                          }}
+                          disabled={creatingMatch === match.destination.id}
+                          className="ml-auto px-4 py-2 bg-primary text-white text-xs font-semibold rounded-xl hover:bg-primary-dark transition disabled:opacity-50 cursor-pointer"
+                        >
+                          {creatingMatch === match.destination.id ? 'Creating...' : 'Plan Trip'}
+                        </button>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       {loading ? (
         <div className="flex items-center justify-center py-20">

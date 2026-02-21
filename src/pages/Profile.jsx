@@ -11,6 +11,7 @@ export default function Profile() {
   const [editingBio, setEditingBio] = useState(false)
   const [savingBio, setSavingBio] = useState(false)
   const [showFriends, setShowFriends] = useState(false)
+  const [showLiked, setShowLiked] = useState(false)
 
   const rightSwipes = Object.entries(swipeResults).filter(([, dir]) => dir === 'right')
   const leftSwipes = Object.entries(swipeResults).filter(([, dir]) => dir === 'left')
@@ -108,9 +109,9 @@ export default function Profile() {
 
       {rightSwipes.length > 0 && (
         <div className="mb-6">
-          <h2 className="font-semibold text-lg mb-3">Liked Destinations</h2>
+          <h2 className="font-semibold text-lg mb-3">Liked Destinations ({rightSwipes.length})</h2>
           <div className="space-y-2">
-            {rightSwipes.map(([destId]) => {
+            {(showLiked ? rightSwipes : rightSwipes.slice(0, 3)).map(([destId]) => {
               const dest = destinations.find(d => d.id === destId)
               if (!dest) return null
               return (
@@ -141,6 +142,14 @@ export default function Profile() {
               )
             })}
           </div>
+          {rightSwipes.length > 3 && (
+            <button
+              onClick={() => setShowLiked(!showLiked)}
+              className="w-full mt-2 py-2 text-sm font-medium text-primary hover:text-primary-dark transition cursor-pointer"
+            >
+              {showLiked ? 'Show Less' : `Show All (${rightSwipes.length - 3} more)`}
+            </button>
+          )}
         </div>
       )}
 

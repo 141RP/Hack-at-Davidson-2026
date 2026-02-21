@@ -87,7 +87,7 @@ export default function ChatView({ conversation, onBack }) {
   const geminiUser = users[GEMINI_USER_ID]
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="fixed inset-0 bottom-16 md:top-16 md:bottom-0 z-40 bg-white flex flex-col" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
       <div className="flex items-center gap-3 px-4 py-3 border-b border-gray-200 bg-white/80 backdrop-blur-xl">
         <button onClick={onBack} className="p-1 -ml-1 rounded-lg hover:bg-gray-100 transition cursor-pointer">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
