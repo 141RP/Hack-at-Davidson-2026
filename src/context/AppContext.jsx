@@ -205,6 +205,13 @@ export function AppProvider({ children }) {
     })
   }, [user])
 
+  const leaveConversation = useCallback(async (conversationId) => {
+    if (!user) return
+    await updateDoc(doc(db, 'conversations', conversationId), {
+      members: arrayRemove(user.id),
+    })
+  }, [user])
+
   const updateConversationMembers = useCallback(async (conversationId, memberIds) => {
     await updateDoc(doc(db, 'conversations', conversationId), {
       members: memberIds,
@@ -220,6 +227,21 @@ export function AppProvider({ children }) {
     const base = [user.id, ...memberIds]
     if (type === 'group') base.push(GEMINI_USER_ID)
     const allMembers = [...new Set(base)]
+    const sortedNew = [...allMembers].sort()
+
+    const q = query(
+      collection(db, 'conversations'),
+      where('members', 'array-contains', user.id),
+    )
+    const snap = await getDocs(q)
+    for (const d of snap.docs) {
+      const sortedExisting = [...(d.data().members || [])].sort()
+      if (sortedExisting.length === sortedNew.length &&
+          sortedExisting.every((id, i) => id === sortedNew[i])) {
+        return d.id
+      }
+    }
+
     const ref = await addDoc(collection(db, 'conversations'), {
       name: name || '',
       type,
@@ -249,6 +271,7 @@ export function AppProvider({ children }) {
       allUsers,
       sendMessage,
       createConversation,
+      leaveConversation,
       updateConversationMembers,
       updateConversationName,
       swipeResults,

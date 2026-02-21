@@ -2,8 +2,8 @@ import { useState, useMemo } from 'react'
 import { useApp } from '../context/AppContext'
 import { useAuth } from '../context/AuthContext'
 
-export default function NewChatModal({ onClose }) {
-  const { createConversation, allUsers, friends, users } = useApp()
+export default function NewChatModal({ onClose, onOpenChat }) {
+  const { createConversation, allUsers, friends, users, conversations } = useApp()
   const { user } = useAuth()
   const [groupName, setGroupName] = useState('')
   const [search, setSearch] = useState('')
@@ -39,7 +39,17 @@ export default function NewChatModal({ onClose }) {
     setCreating(true)
     const type = members.length === 1 && !groupName.trim() ? 'dm' : 'group'
     const name = type === 'group' ? (groupName.trim() || 'Group Chat') : ''
-    await createConversation(name, type, members.map(m => m.id))
+    const convId = await createConversation(name, type, members.map(m => m.id))
+    if (onOpenChat && convId) {
+      const conv = conversations.find(c => c.id === convId)
+      if (conv) {
+        onOpenChat(conv)
+      } else {
+        setTimeout(() => {
+          onOpenChat({ id: convId, name, type, members: [user.id, ...members.map(m => m.id)] })
+        }, 500)
+      }
+    }
     onClose()
   }
 

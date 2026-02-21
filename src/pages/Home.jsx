@@ -16,10 +16,11 @@ function timeAgo(ts) {
 }
 
 export default function Home() {
-  const { conversations, users, loading } = useApp()
+  const { conversations, users, loading, leaveConversation } = useApp()
   const { user } = useAuth()
   const [activeChat, setActiveChat] = useState(null)
   const [showNewChat, setShowNewChat] = useState(false)
+  const [deleteTarget, setDeleteTarget] = useState(null)
 
   if (activeChat) {
     return <ChatView conversation={activeChat} onBack={() => setActiveChat(null)} />
@@ -89,43 +90,89 @@ export default function Home() {
               : users[conv.lastMessageSender]?.name?.split(' ')[0] || ''
 
             return (
-              <button
-                key={conv.id}
-                onClick={() => setActiveChat(conv)}
-                className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition text-left cursor-pointer"
-              >
-                {conv.type === 'group' ? (
-                  <div className="relative flex-shrink-0 w-12 h-12">
-                    <div className="absolute top-0 left-0 w-8 h-8 rounded-full bg-primary/20 border-2 border-white overflow-hidden">
-                      <img src={users[otherMembers[0]]?.avatar} alt="" className="w-full h-full" />
+              <div key={conv.id} className="flex items-center hover:bg-gray-50 transition">
+                <button
+                  onClick={() => setActiveChat(conv)}
+                  className="flex-1 flex items-center gap-3 px-4 py-3 text-left cursor-pointer min-w-0"
+                >
+                  {conv.type === 'group' ? (
+                    <div className="relative flex-shrink-0 w-12 h-12">
+                      <div className="absolute top-0 left-0 w-8 h-8 rounded-full bg-primary/20 border-2 border-white overflow-hidden">
+                        <img src={users[otherMembers[0]]?.avatar} alt="" className="w-full h-full" />
+                      </div>
+                      <div className="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-accent/20 border-2 border-white overflow-hidden">
+                        <img src={users[otherMembers[1]]?.avatar} alt="" className="w-full h-full" />
+                      </div>
                     </div>
-                    <div className="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-accent/20 border-2 border-white overflow-hidden">
-                      <img src={users[otherMembers[1]]?.avatar} alt="" className="w-full h-full" />
+                  ) : (
+                    <img src={avatar} alt="" className="flex-shrink-0 w-12 h-12 rounded-full bg-gray-200" referrerPolicy="no-referrer" />
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between">
+                      <h3 className="font-semibold text-sm text-text-primary truncate">{displayName}</h3>
+                      <span className="text-xs text-text-secondary flex-shrink-0 ml-2">
+                        {timeAgo(conv.lastMessageTime)}
+                      </span>
                     </div>
+                    <p className="text-sm text-text-secondary truncate mt-0.5">
+                      {conv.lastMessageText
+                        ? `${conv.type === 'group' && senderName ? `${senderName}: ` : ''}${conv.lastMessageText}`
+                        : 'No messages yet'}
+                    </p>
                   </div>
-                ) : (
-                  <img src={avatar} alt="" className="flex-shrink-0 w-12 h-12 rounded-full bg-gray-200" referrerPolicy="no-referrer" />
-                )}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-semibold text-sm text-text-primary truncate">{displayName}</h3>
-                    <span className="text-xs text-text-secondary flex-shrink-0 ml-2">
-                      {timeAgo(conv.lastMessageTime)}
-                    </span>
-                  </div>
-                  <p className="text-sm text-text-secondary truncate mt-0.5">
-                    {conv.lastMessageText
-                      ? `${conv.type === 'group' && senderName ? `${senderName}: ` : ''}${conv.lastMessageText}`
-                      : 'No messages yet'}
-                  </p>
-                </div>
-              </button>
+                </button>
+                <button
+                  onClick={() => setDeleteTarget(conv)}
+                  className="flex-shrink-0 p-2 mr-2 rounded-xl hover:bg-red-50 transition cursor-pointer"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4.5 h-4.5 text-red-400">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                  </svg>
+                </button>
+              </div>
             )
           })}
         </div>
       )}
 
-      {showNewChat && <NewChatModal onClose={() => setShowNewChat(false)} />}
+      {showNewChat && (
+        <NewChatModal
+          onClose={() => setShowNewChat(false)}
+          onOpenChat={(conv) => setActiveChat(conv)}
+        />
+      )}
+
+      {deleteTarget && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4" onClick={() => setDeleteTarget(null)}>
+          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-sm p-6" onClick={e => e.stopPropagation()}>
+            <h3 className="text-lg font-bold mb-2">
+              {deleteTarget.type === 'group' ? 'Leave Group' : 'Delete Chat'}
+            </h3>
+            <p className="text-sm text-text-secondary mb-5">
+              {deleteTarget.type === 'group'
+                ? 'You will be removed from this group. Other members will still see the chat.'
+                : 'This chat will be removed from your messages. The other person will still see it.'}
+            </p>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setDeleteTarget(null)}
+                className="flex-1 py-3 bg-gray-100 text-text-primary rounded-2xl font-medium hover:bg-gray-200 transition cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={async () => {
+                  await leaveConversation(deleteTarget.id)
+                  setDeleteTarget(null)
+                }}
+                className="flex-1 py-3 bg-red-500 text-white rounded-2xl font-medium hover:bg-red-600 transition cursor-pointer"
+              >
+                {deleteTarget.type === 'group' ? 'Leave' : 'Delete'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
