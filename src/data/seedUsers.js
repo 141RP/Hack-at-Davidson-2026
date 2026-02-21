@@ -3,6 +3,12 @@ import { db } from '../firebase'
 
 const SEED_USERS = [
   {
+    id: 'gemini-bot',
+    name: 'Gemini',
+    email: 'gemini@google.com',
+    avatar: 'https://api.dicebear.com/9.x/bottts/svg?seed=gemini&backgroundColor=4285f4',
+  },
+  {
     id: 'seed-sarah',
     name: 'Sarah Chen',
     email: 'sarah.chen@gmail.com',
