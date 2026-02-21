@@ -1,7 +1,8 @@
 import { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react'
 import {
   collection, query, where, orderBy,
-  onSnapshot, addDoc, updateDoc, doc, getDoc, getDocs, setDoc,
+  onSnapshot, addDoc, updateDoc, doc, getDoc, getDocs, setDoc, deleteDoc,
+  arrayUnion, arrayRemove,
 } from 'firebase/firestore'
 import { db } from '../firebase'
 import { useAuth } from './AuthContext'
@@ -21,6 +22,10 @@ export function AppProvider({ children }) {
   const [loading, setLoading] = useState(true)
   const fetchedUsers = useRef(new Set())
   const seeded = useRef(false)
+
+  const [friends, setFriends] = useState([])
+  const [incomingRequests, setIncomingRequests] = useState([])
+  const [sentRequests, setSentRequests] = useState([])
 
   useEffect(() => {
     if (user) {
@@ -85,6 +90,105 @@ export function AppProvider({ children }) {
     })
     return unsub
   }, [user])
+
+  // Listen to current user's friends array
+  useEffect(() => {
+    if (!user) return
+    const unsub = onSnapshot(doc(db, 'users', user.id), (snap) => {
+      if (snap.exists()) {
+        const data = snap.data()
+        setFriends(data.friends || [])
+      }
+    })
+    return unsub
+  }, [user])
+
+  // Listen to incoming friend requests (pending, sent TO me)
+  useEffect(() => {
+    if (!user) return
+    const q = query(
+      collection(db, 'friendRequests'),
+      where('to', '==', user.id),
+      where('status', '==', 'pending'),
+    )
+    const unsub = onSnapshot(q, (snapshot) => {
+      const reqs = snapshot.docs.map(d => ({ id: d.id, ...d.data() }))
+      setIncomingRequests(reqs)
+      for (const req of reqs) {
+        if (!fetchedUsers.current.has(req.from)) {
+          fetchedUsers.current.add(req.from)
+          getDoc(doc(db, 'users', req.from)).then(snap => {
+            if (snap.exists()) {
+              setUsers(prev => ({ ...prev, [req.from]: { id: req.from, ...snap.data() } }))
+            }
+          })
+        }
+      }
+    })
+    return unsub
+  }, [user])
+
+  // Listen to outgoing friend requests (pending, sent BY me)
+  useEffect(() => {
+    if (!user) return
+    const q = query(
+      collection(db, 'friendRequests'),
+      where('from', '==', user.id),
+      where('status', '==', 'pending'),
+    )
+    const unsub = onSnapshot(q, (snapshot) => {
+      setSentRequests(snapshot.docs.map(d => ({ id: d.id, ...d.data() })))
+    })
+    return unsub
+  }, [user])
+
+  const sendFriendRequest = useCallback(async (targetUserId) => {
+    if (!user) return
+    await addDoc(collection(db, 'friendRequests'), {
+      from: user.id,
+      to: targetUserId,
+      status: 'pending',
+      createdAt: Date.now(),
+    })
+  }, [user])
+
+  const acceptFriendRequest = useCallback(async (requestId, fromUserId) => {
+    if (!user) return
+    await updateDoc(doc(db, 'friendRequests', requestId), { status: 'accepted' })
+    await updateDoc(doc(db, 'users', user.id), { friends: arrayUnion(fromUserId) })
+    await updateDoc(doc(db, 'users', fromUserId), { friends: arrayUnion(user.id) })
+  }, [user])
+
+  const denyFriendRequest = useCallback(async (requestId) => {
+    await updateDoc(doc(db, 'friendRequests', requestId), { status: 'denied' })
+  }, [])
+
+  const removeFriend = useCallback(async (friendId) => {
+    if (!user) return
+    await updateDoc(doc(db, 'users', user.id), { friends: arrayRemove(friendId) })
+    await updateDoc(doc(db, 'users', friendId), { friends: arrayRemove(user.id) })
+  }, [user])
+
+  const updateBio = useCallback(async (bio) => {
+    if (!user) return
+    await updateDoc(doc(db, 'users', user.id), { bio })
+    setUsers(prev => ({ ...prev, [user.id]: { ...prev[user.id], bio } }))
+  }, [user])
+
+  const getUserSwipes = useCallback(async (userId) => {
+    const snapshot = await getDocs(collection(db, 'users', userId, 'swipes'))
+    const results = {}
+    snapshot.docs.forEach(d => { results[d.id] = d.data().direction })
+    return results
+  }, [])
+
+  const getUserFriends = useCallback(async (userId) => {
+    const snap = await getDoc(doc(db, 'users', userId))
+    if (snap.exists()) {
+      return snap.data().friends || []
+    }
+    return []
+  }, [])
 
   const sendMessage = useCallback(async (conversationId, text) => {
     if (!user) return
@@ -154,6 +258,16 @@ export function AppProvider({ children }) {
       totalDestinations: DESTINATIONS.length,
       destinations: DESTINATIONS,
       loading,
+      friends,
+      incomingRequests,
+      sentRequests,
+      sendFriendRequest,
+      acceptFriendRequest,
+      denyFriendRequest,
+      removeFriend,
+      updateBio,
+      getUserSwipes,
+      getUserFriends,
     }}>
       {children}
     </AppContext.Provider>

@@ -22,7 +22,7 @@ export function AuthProvider({ children }) {
 
         const snap = await getDoc(userRef)
         if (!snap.exists()) {
-          await setDoc(userRef, { ...userData, createdAt: Date.now() })
+          await setDoc(userRef, { ...userData, bio: '', friends: [], createdAt: Date.now() })
         } else {
           await setDoc(userRef, userData, { merge: true })
         }

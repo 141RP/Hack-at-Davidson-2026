@@ -3,7 +3,7 @@ import { useApp } from '../context/AppContext'
 import { useAuth } from '../context/AuthContext'
 
 export default function NewChatModal({ onClose }) {
-  const { createConversation, allUsers } = useApp()
+  const { createConversation, allUsers, friends, users } = useApp()
   const { user } = useAuth()
   const [groupName, setGroupName] = useState('')
   const [search, setSearch] = useState('')
@@ -11,10 +11,11 @@ export default function NewChatModal({ onClose }) {
   const [creating, setCreating] = useState(false)
 
   const addedIds = new Set(members.map(m => m.id))
+  const friendSet = new Set(friends)
 
   const availableUsers = useMemo(() => {
-    return allUsers.filter(u => u.id !== user.id && !addedIds.has(u.id))
-  }, [allUsers, user.id, addedIds])
+    return allUsers.filter(u => u.id !== user.id && !addedIds.has(u.id) && friendSet.has(u.id))
+  }, [allUsers, user.id, addedIds, friendSet])
 
   const filteredUsers = useMemo(() => {
     if (!search.trim()) return availableUsers
@@ -113,10 +114,12 @@ export default function NewChatModal({ onClose }) {
           {/* User list */}
           <div className="mb-4">
             {!search.trim() && filteredUsers.length > 0 && (
-              <p className="text-xs font-semibold text-text-secondary uppercase tracking-wide mb-1.5">Suggested</p>
+              <p className="text-xs font-semibold text-text-secondary uppercase tracking-wide mb-1.5">Your Friends</p>
             )}
-            {search.trim() && filteredUsers.length === 0 && (
-              <p className="text-sm text-text-secondary text-center py-4">No users found</p>
+            {filteredUsers.length === 0 && (
+              <p className="text-sm text-text-secondary text-center py-4">
+                {friends.length === 0 ? 'Add friends first to start a chat' : 'No friends found'}
+              </p>
             )}
             <div className="space-y-1">
               {filteredUsers.map(u => (

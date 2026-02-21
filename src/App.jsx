@@ -6,6 +6,8 @@ import Login from './pages/Login'
 import Home from './pages/Home'
 import Swipe from './pages/Swipe'
 import Profile from './pages/Profile'
+import Friends from './pages/Friends'
+import Notifications from './pages/Notifications'
 
 function AuthenticatedApp() {
   return (
@@ -16,7 +18,9 @@ function AuthenticatedApp() {
           <div className="h-full md:h-auto">
             <Routes>
               <Route path="/" element={<Home />} />
+              <Route path="/friends" element={<Friends />} />
               <Route path="/swipe" element={<Swipe />} />
+              <Route path="/notifications" element={<Notifications />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>

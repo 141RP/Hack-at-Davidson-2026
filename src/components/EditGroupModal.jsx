@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext'
 import { GEMINI_USER_ID } from '../services/gemini'
 
 export default function EditGroupModal({ conversation, onClose }) {
-  const { allUsers, users, updateConversationMembers, updateConversationName } = useApp()
+  const { allUsers, users, updateConversationMembers, updateConversationName, friends } = useApp()
   const { user } = useAuth()
   const [name, setName] = useState(conversation.name || '')
   const [members, setMembers] = useState(
@@ -17,11 +17,13 @@ export default function EditGroupModal({ conversation, onClose }) {
 
   const addedIds = new Set(members.map(m => m.id))
 
+  const friendSet = new Set(friends)
+
   const availableUsers = useMemo(() => {
     return allUsers.filter(u =>
-      u.id !== user.id && u.id !== GEMINI_USER_ID && !addedIds.has(u.id)
+      u.id !== user.id && u.id !== GEMINI_USER_ID && !addedIds.has(u.id) && friendSet.has(u.id)
     )
-  }, [allUsers, user.id, addedIds])
+  }, [allUsers, user.id, addedIds, friendSet])
 
   const filteredUsers = useMemo(() => {
     if (!search.trim()) return availableUsers

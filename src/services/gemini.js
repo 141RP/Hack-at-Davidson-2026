@@ -6,7 +6,7 @@ const SYSTEM_PROMPT = `You are a helpful travel planning assistant embedded in a
 
 export async function askGemini(question) {
   const model = genAI.getGenerativeModel({
-    model: 'gemini-2.0-flash',
+    model: 'gemini-2.5-flash',
     systemInstruction: SYSTEM_PROMPT,
   })
   const result = await model.generateContent(question)

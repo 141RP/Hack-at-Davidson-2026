@@ -1,13 +1,27 @@
+import { useState } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { useApp } from '../context/AppContext'
+import FriendsListModal from '../components/FriendsListModal'
 
 export default function Profile() {
   const { user, logout } = useAuth()
-  const { swipeResults, destinations, conversations } = useApp()
+  const { swipeResults, destinations, conversations, friends, updateBio, users } = useApp()
+
+  const [bio, setBio] = useState(users[user.id]?.bio || '')
+  const [editingBio, setEditingBio] = useState(false)
+  const [savingBio, setSavingBio] = useState(false)
+  const [showFriends, setShowFriends] = useState(false)
 
   const rightSwipes = Object.entries(swipeResults).filter(([, dir]) => dir === 'right')
   const leftSwipes = Object.entries(swipeResults).filter(([, dir]) => dir === 'left')
   const groupChats = conversations.filter(c => c.type === 'group')
+
+  async function handleSaveBio() {
+    setSavingBio(true)
+    await updateBio(bio)
+    setSavingBio(false)
+    setEditingBio(false)
+  }
 
   return (
     <div className="max-w-lg mx-auto px-4 pt-4 md:pt-6 pb-24">
@@ -17,6 +31,12 @@ export default function Profile() {
           <div>
             <h1 className="text-xl font-bold">{user.name}</h1>
             <p className="text-white/70 text-sm">{user.email}</p>
+            <button
+              onClick={() => setShowFriends(true)}
+              className="text-white/80 text-sm mt-0.5 hover:underline cursor-pointer"
+            >
+              {friends.length} friend{friends.length !== 1 ? 's' : ''}
+            </button>
           </div>
         </div>
 
@@ -34,6 +54,56 @@ export default function Profile() {
             <p className="text-xs text-white/70">Groups</p>
           </div>
         </div>
+      </div>
+
+      <div className="mb-6">
+        <div className="flex items-center justify-between mb-2">
+          <h2 className="font-semibold text-lg">Bio</h2>
+          {!editingBio && (
+            <button
+              onClick={() => setEditingBio(true)}
+              className="text-xs font-medium text-primary hover:text-primary-dark transition cursor-pointer"
+            >
+              Edit
+            </button>
+          )}
+        </div>
+        {editingBio ? (
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-3">
+            <textarea
+              value={bio}
+              onChange={e => setBio(e.target.value)}
+              placeholder="Tell your friends about yourself..."
+              rows={3}
+              maxLength={200}
+              className="w-full text-sm resize-none focus:outline-none"
+            />
+            <div className="flex items-center justify-between mt-2">
+              <span className="text-xs text-text-secondary">{bio.length}/200</span>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => { setEditingBio(false); setBio(users[user.id]?.bio || '') }}
+                  className="px-3 py-1.5 text-xs font-medium text-text-secondary hover:bg-gray-100 rounded-lg transition cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSaveBio}
+                  disabled={savingBio}
+                  className="px-3 py-1.5 text-xs font-medium bg-primary text-white rounded-lg hover:bg-primary-dark transition disabled:opacity-50 cursor-pointer"
+                >
+                  {savingBio ? 'Saving...' : 'Save'}
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4">
+            <p className="text-sm text-text-primary">
+              {users[user.id]?.bio || 'No bio yet. Click Edit to add one!'}
+            </p>
+          </div>
+        )}
       </div>
 
       {rightSwipes.length > 0 && (
@@ -83,20 +153,6 @@ export default function Profile() {
       <div className="mb-6">
         <h2 className="font-semibold text-lg mb-3">Settings</h2>
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-          <button className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-gray-50 transition text-left cursor-pointer">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 text-text-secondary">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
-            </svg>
-            <span className="text-sm">Notifications</span>
-          </button>
-          <div className="border-t border-gray-100" />
-          <button className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-gray-50 transition text-left cursor-pointer">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 text-text-secondary">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
-            </svg>
-            <span className="text-sm">Privacy</span>
-          </button>
-          <div className="border-t border-gray-100" />
           <button
             onClick={logout}
             className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-gray-50 transition text-left cursor-pointer"
@@ -108,6 +164,15 @@ export default function Profile() {
           </button>
         </div>
       </div>
+
+      {showFriends && (
+        <FriendsListModal
+          userId={user.id}
+          friendIds={friends}
+          isOwnProfile={true}
+          onClose={() => setShowFriends(false)}
+        />
+      )}
     </div>
   )
 }
