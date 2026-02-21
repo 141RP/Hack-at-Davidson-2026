@@ -7,6 +7,7 @@ import { db } from '../firebase'
 import { useAuth } from './AuthContext'
 import { DESTINATIONS } from '../data/mockData'
 import { seedUsers } from '../data/seedUsers'
+import { GEMINI_USER_ID } from '../services/gemini'
 
 const AppContext = createContext(null)
 
@@ -100,9 +101,21 @@ export function AppProvider({ children }) {
     })
   }, [user])
 
+  const updateConversationMembers = useCallback(async (conversationId, memberIds) => {
+    await updateDoc(doc(db, 'conversations', conversationId), {
+      members: memberIds,
+    })
+  }, [])
+
+  const updateConversationName = useCallback(async (conversationId, name) => {
+    await updateDoc(doc(db, 'conversations', conversationId), { name })
+  }, [])
+
   const createConversation = useCallback(async (name, type, memberIds) => {
     if (!user) return null
-    const allMembers = [...new Set([user.id, ...memberIds])]
+    const base = [user.id, ...memberIds]
+    if (type === 'group') base.push(GEMINI_USER_ID)
+    const allMembers = [...new Set(base)]
     const ref = await addDoc(collection(db, 'conversations'), {
       name: name || '',
       type,
@@ -132,6 +145,8 @@ export function AppProvider({ children }) {
       allUsers,
       sendMessage,
       createConversation,
+      updateConversationMembers,
+      updateConversationName,
       swipeResults,
       swipe,
       currentDestination,
