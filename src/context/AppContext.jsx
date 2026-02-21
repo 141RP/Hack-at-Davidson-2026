@@ -262,6 +262,11 @@ export function AppProvider({ children }) {
     })
   }, [user])
 
+  const removeSwipe = useCallback(async (destinationId) => {
+    if (!user) return
+    await deleteDoc(doc(db, 'users', user.id, 'swipes', destinationId))
+  }, [user])
+
   const currentDestination = DESTINATIONS[currentDestIdx] || null
 
   return (
@@ -276,6 +281,7 @@ export function AppProvider({ children }) {
       updateConversationName,
       swipeResults,
       swipe,
+      removeSwipe,
       currentDestination,
       currentDestIdx,
       totalDestinations: DESTINATIONS.length,

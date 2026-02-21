@@ -1,14 +1,44 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect, useMemo } from 'react'
 import { useApp } from '../context/AppContext'
 
 export default function Swipe() {
-  const { currentDestination, swipe, currentDestIdx, totalDestinations, swipeResults, destinations } = useApp()
+  const { currentDestination, swipe, currentDestIdx, totalDestinations, swipeResults, destinations, friends, users, getUserSwipes } = useApp()
   const [dragX, setDragX] = useState(0)
   const [isDragging, setIsDragging] = useState(false)
   const [exitDirection, setExitDirection] = useState(null)
   const startX = useRef(0)
+  const [friendSwipes, setFriendSwipes] = useState({})
+  const loadedFriends = useRef(new Set())
 
-  if (!currentDestination) {
+  useEffect(() => {
+    for (const fid of friends) {
+      if (!loadedFriends.current.has(fid)) {
+        loadedFriends.current.add(fid)
+        getUserSwipes(fid).then(swipes => {
+          setFriendSwipes(prev => ({ ...prev, [fid]: swipes }))
+        })
+      }
+    }
+  }, [friends, getUserSwipes])
+
+  const unlikedDests = useMemo(() => {
+    return destinations.filter(d => swipeResults[d.id] === 'left')
+  }, [destinations, swipeResults])
+
+  const [recycleIdx, setRecycleIdx] = useState(0)
+
+  const showRecycled = !currentDestination && unlikedDests.length > 0
+  const displayDest = currentDestination || (showRecycled ? unlikedDests[recycleIdx % unlikedDests.length] : null)
+
+  const friendsWhoLiked = useMemo(() => {
+    if (!displayDest) return []
+    return friends
+      .filter(fid => friendSwipes[fid]?.[displayDest.id] === 'right')
+      .map(fid => users[fid]?.name?.split(' ')[0])
+      .filter(Boolean)
+  }, [displayDest, friends, friendSwipes, users])
+
+  if (!displayDest) {
     const rightSwipes = Object.entries(swipeResults).filter(([, dir]) => dir === 'right')
     return (
       <div className="max-w-lg mx-auto px-4 pt-8 text-center">
@@ -54,7 +84,8 @@ export default function Swipe() {
       const dir = dragX > 0 ? 'right' : 'left'
       setExitDirection(dir)
       setTimeout(() => {
-        swipe(currentDestination.id, dir)
+        swipe(displayDest.id, dir)
+        if (showRecycled) setRecycleIdx(prev => prev + 1)
         setDragX(0)
         setExitDirection(null)
       }, 300)
@@ -66,7 +97,8 @@ export default function Swipe() {
   function handleButtonSwipe(dir) {
     setExitDirection(dir)
     setTimeout(() => {
-      swipe(currentDestination.id, dir)
+      swipe(displayDest.id, dir)
+      if (showRecycled) setRecycleIdx(prev => prev + 1)
       setDragX(0)
       setExitDirection(null)
     }, 300)
@@ -85,7 +117,7 @@ export default function Swipe() {
       <div className="w-full flex items-center justify-between mb-4">
         <h1 className="text-xl font-bold">Explore</h1>
         <span className="text-sm text-text-secondary">
-          {currentDestIdx + 1} / {totalDestinations}
+          {showRecycled ? 'Previously passed' : `${currentDestIdx + 1} / ${totalDestinations}`}
         </span>
       </div>
 
@@ -102,8 +134,8 @@ export default function Swipe() {
         className="relative w-full aspect-[3/4] max-h-[65vh] rounded-3xl overflow-hidden shadow-xl cursor-grab active:cursor-grabbing select-none"
       >
         <img
-          src={currentDestination.image}
-          alt={currentDestination.name}
+          src={displayDest.image}
+          alt={displayDest.name}
           className="w-full h-full object-cover pointer-events-none"
           draggable={false}
         />
@@ -121,10 +153,10 @@ export default function Swipe() {
         )}
 
         <div className="absolute bottom-0 left-0 right-0 p-5 text-white">
-          <h2 className="text-2xl font-bold mb-1">{currentDestination.name}</h2>
-          <p className="text-sm text-white/80 mb-3 line-clamp-2">{currentDestination.description}</p>
+          <h2 className="text-2xl font-bold mb-1">{displayDest.name}</h2>
+          <p className="text-sm text-white/80 mb-3 line-clamp-2">{displayDest.description}</p>
           <div className="flex items-center gap-2 flex-wrap mb-2">
-            {currentDestination.tags.map(tag => (
+            {displayDest.tags.map(tag => (
               <span key={tag} className="px-2.5 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs font-medium">
                 {tag}
               </span>
@@ -135,10 +167,20 @@ export default function Swipe() {
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 text-yellow-400">
                 <path fillRule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z" clipRule="evenodd" />
               </svg>
-              {currentDestination.rating}
+              {displayDest.rating}
             </span>
-            <span>{currentDestination.price}</span>
-            <span>{currentDestination.duration}</span>
+            <span>{displayDest.price}</span>
+            <span>{displayDest.duration}</span>
+            {friendsWhoLiked.length > 0 && (
+              <span className="ml-auto flex items-center gap-1.5 px-2.5 py-1 bg-white/20 backdrop-blur-md rounded-full text-xs font-medium">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5 text-pink-300">
+                  <path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z" />
+                </svg>
+                {friendsWhoLiked.length === 1
+                  ? `Liked by ${friendsWhoLiked[0]}`
+                  : `Liked by ${friendsWhoLiked[0]} & ${friendsWhoLiked[1]}`}
+              </span>
+            )}
           </div>
         </div>
       </div>
