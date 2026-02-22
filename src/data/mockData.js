@@ -326,7 +326,7 @@ export const DESTINATIONS = [
   {
     id: 'd28',
     name: 'Rome, Italy',
-    image: 'https://images.unsplash.com/photo-1552832230-cb7b0e4a0e6e?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1525874684015-58379d421a52?w=800&q=80',
     description: 'The Colosseum, Vatican City, gelato, and millennia of history at every corner.',
     price: '$1,000 - $1,600',
     priceLevel: 2,
@@ -338,7 +338,7 @@ export const DESTINATIONS = [
   {
     id: 'd29',
     name: 'Sydney, Australia',
-    image: 'https://images.unsplash.com/photo-1523482580671-f31bfae1df70?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?w=800&q=80',
     description: 'Opera House views, Bondi Beach, harbor cruises, and laid-back Aussie lifestyle.',
     price: '$1,200 - $1,900',
     priceLevel: 3,
@@ -398,7 +398,7 @@ export const DESTINATIONS = [
   {
     id: 'd34',
     name: 'Athens, Greece',
-    image: 'https://images.unsplash.com/photo-1555993529-ae585a98c974?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1555993539-1732b0258235?w=800&q=80',
     description: 'The Acropolis, ancient temples, tavernas, and the cradle of Western civilization.',
     price: '$700 - $1,100',
     priceLevel: 1,
@@ -458,7 +458,7 @@ export const DESTINATIONS = [
   {
     id: 'd39',
     name: 'Zanzibar, Tanzania',
-    image: 'https://images.unsplash.com/photo-1539650116574-75c0c6d73f6e?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1586861635167-e5223aadc9fe?w=800&q=80',
     description: 'Spice markets, white-sand beaches, turquoise waters, and Swahili culture.',
     price: '$800 - $1,400',
     priceLevel: 2,
@@ -470,7 +470,7 @@ export const DESTINATIONS = [
   {
     id: 'd40',
     name: 'Petra, Jordan',
-    image: 'https://images.unsplash.com/photo-1578898887938-6f1a8b2b8e1c?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1579606032821-4e6161c81571?w=800&q=80',
     description: 'The Treasury carved in rose-red rock, ancient Nabataean ruins, and desert wonder.',
     price: '$900 - $1,500',
     priceLevel: 2,
@@ -482,7 +482,7 @@ export const DESTINATIONS = [
   {
     id: 'd41',
     name: 'Edinburgh, Scotland',
-    image: 'https://images.unsplash.com/photo-1509059852496-f9d2696b4f2d?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1506377585622-bedcbb027afc?w=800&q=80',
     description: 'Castle on the hill, whisky, bagpipes, and literary magic in every alley.',
     price: '$900 - $1,400',
     priceLevel: 2,
@@ -506,7 +506,7 @@ export const DESTINATIONS = [
   {
     id: 'd43',
     name: 'Florence, Italy',
-    image: 'https://images.unsplash.com/photo-1543423935-b9e32906a932?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1541370976299-4d24ebbc9077?w=800&q=80',
     description: 'Renaissance masterpieces, Duomo views, Tuscan cuisine, and art at every turn.',
     price: '$1,000 - $1,600',
     priceLevel: 2,
@@ -518,7 +518,7 @@ export const DESTINATIONS = [
   {
     id: 'd44',
     name: 'Tulum, Mexico',
-    image: 'https://images.unsplash.com/photo-1551698618-1e4a50995a55?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1682553064441-5ca5e4b1460c?w=800&q=80',
     description: 'Beachside ruins, cenotes, eco-lodges, and bohemian beach vibes.',
     price: '$700 - $1,200',
     priceLevel: 1,
@@ -590,7 +590,7 @@ export const DESTINATIONS = [
   {
     id: 'd50',
     name: 'Miami, USA',
-    image: 'https://images.unsplash.com/photo-1534190760961-2e9b59baf448?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1533106497176-45ae19e68ba2?w=800&q=80',
     description: 'Art Deco, South Beach, Cuban coffee, and nonstop sun and fun.',
     price: '$900 - $1,500',
     priceLevel: 2,
@@ -662,7 +662,7 @@ export const DESTINATIONS = [
   {
     id: 'd56',
     name: 'Dublin, Ireland',
-    image: 'https://images.unsplash.com/photo-1548089945-aba5fd8a68d7?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1549918864-48ac978761a4?w=800&q=80',
     description: 'Pints of Guinness, Trinity College, literary pubs, and Irish charm.',
     price: '$900 - $1,400',
     priceLevel: 2,
@@ -674,7 +674,7 @@ export const DESTINATIONS = [
   {
     id: 'd57',
     name: 'Jerusalem, Israel',
-    image: 'https://images.unsplash.com/photo-1515596469025-2d7810b2eeeb?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1547483238-2cbf881a559f?w=800&q=80',
     description: 'Sacred sites, Old City walls, hummus, and the crossroads of faiths.',
     price: '$1,000 - $1,600',
     priceLevel: 2,
@@ -698,7 +698,7 @@ export const DESTINATIONS = [
   {
     id: 'd59',
     name: 'Bruges, Belgium',
-    image: 'https://images.unsplash.com/photo-1569940555387-c27a4b91c98f?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1491557345352-5929e343eb89?w=800&q=80',
     description: 'Canal walks, chocolate shops, medieval towers, and fairy-tale cobblestones.',
     price: '$800 - $1,200',
     priceLevel: 2,
@@ -842,7 +842,7 @@ export const DESTINATIONS = [
   {
     id: 'd71',
     name: 'Goa, India',
-    image: 'https://images.unsplash.com/photo-1539650116574-75c0c6d73f6e?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?w=800&q=80',
     description: 'Beach shacks, Portuguese churches, trance parties, and coastal Indian charm.',
     price: '$400 - $800',
     priceLevel: 1,
@@ -926,7 +926,7 @@ export const DESTINATIONS = [
   {
     id: 'd78',
     name: 'Palermo, Sicily',
-    image: 'https://images.unsplash.com/photo-1552832230-cb7b0e4a0e6e?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1523846530050-dcbd39e78751?w=800&q=80',
     description: 'Street food, Norman palaces, Mafia history, and Sicilian intensity.',
     price: '$700 - $1,100',
     priceLevel: 1,
@@ -998,7 +998,7 @@ export const DESTINATIONS = [
   {
     id: 'd84',
     name: 'St. Lucia',
-    image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1572985025058-f29460412063?w=800&q=80',
     description: 'Piton peaks, volcanic springs, cocoa plantations, and lush Caribbean beauty.',
     price: '$1,200 - $2,000',
     priceLevel: 3,
@@ -1154,7 +1154,7 @@ export const DESTINATIONS = [
   {
     id: 'd97',
     name: 'Dominican Republic',
-    image: 'https://images.unsplash.com/photo-1513245543132-31f507417b26?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1580237072617-771c3ecc4a24?w=800&q=80',
     description: 'Punta Cana beaches, merengue, colonial Santo Domingo, and all-inclusive paradise.',
     price: '$600 - $1,200',
     priceLevel: 1,
@@ -1178,7 +1178,7 @@ export const DESTINATIONS = [
   {
     id: 'd99',
     name: 'Mauritius',
-    image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1589979481223-deb893043163?w=800&q=80',
     description: 'Rainbow earth, Seven Colored Earths, Chamarel Falls, and Indian Ocean luxury.',
     price: '$1,500 - $2,500',
     priceLevel: 3,
