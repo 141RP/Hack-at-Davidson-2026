@@ -470,7 +470,7 @@ export const DESTINATIONS = [
   {
     id: 'd40',
     name: 'Petra, Jordan',
-    image: 'https://images.unsplash.com/photo-1579606032821-4e6161c81571?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1563492065599-3520f775eeed?w=800&q=80',
     description: 'The Treasury carved in rose-red rock, ancient Nabataean ruins, and desert wonder.',
     price: '$900 - $1,500',
     priceLevel: 2,
@@ -518,7 +518,7 @@ export const DESTINATIONS = [
   {
     id: 'd44',
     name: 'Tulum, Mexico',
-    image: 'https://images.unsplash.com/photo-1682553064441-5ca5e4b1460c?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1504730655501-24b5c5e5ad04?w=800&q=80',
     description: 'Beachside ruins, cenotes, eco-lodges, and bohemian beach vibes.',
     price: '$700 - $1,200',
     priceLevel: 1,
@@ -710,7 +710,7 @@ export const DESTINATIONS = [
   {
     id: 'd60',
     name: 'Jamaica',
-    image: 'https://images.unsplash.com/photo-1513245543132-31f507417b26?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1545389336-cf090694435e?w=800&q=80',
     description: 'Reggae vibes, Dunn\'s River Falls, jerk chicken, and laid-back Caribbean spirit.',
     price: '$700 - $1,200',
     priceLevel: 1,
@@ -926,7 +926,7 @@ export const DESTINATIONS = [
   {
     id: 'd78',
     name: 'Palermo, Sicily',
-    image: 'https://images.unsplash.com/photo-1523846530050-dcbd39e78751?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1498307833015-e7b400441eb8?w=800&q=80',
     description: 'Street food, Norman palaces, Mafia history, and Sicilian intensity.',
     price: '$700 - $1,100',
     priceLevel: 1,
@@ -998,7 +998,7 @@ export const DESTINATIONS = [
   {
     id: 'd84',
     name: 'St. Lucia',
-    image: 'https://images.unsplash.com/photo-1572985025058-f29460412063?w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1500759285222-a95626b934cb?w=800&q=80',
     description: 'Piton peaks, volcanic springs, cocoa plantations, and lush Caribbean beauty.',
     price: '$1,200 - $2,000',
     priceLevel: 3,
