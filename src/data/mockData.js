@@ -470,7 +470,7 @@ export const DESTINATIONS = [
   {
     id: 'd40',
     name: 'Petra, Jordan',
-    image: 'https://images.unsplash.com/photo-1563492065599-3520f775eeed?w=800&q=80',
+    image: 'https://ichef.bbci.co.uk/images/ic/480xn/p00x5gnw.jpg.webp',
     description: 'The Treasury carved in rose-red rock, ancient Nabataean ruins, and desert wonder.',
     price: '$900 - $1,500',
     priceLevel: 2,
@@ -518,7 +518,7 @@ export const DESTINATIONS = [
   {
     id: 'd44',
     name: 'Tulum, Mexico',
-    image: 'https://images.unsplash.com/photo-1504730655501-24b5c5e5ad04?w=800&q=80',
+    image: 'https://www.otherwayround.travel/wp-content/uploads/2021/03/solo-travel-to-latin-america-tulum.jpg',
     description: 'Beachside ruins, cenotes, eco-lodges, and bohemian beach vibes.',
     price: '$700 - $1,200',
     priceLevel: 1,
@@ -710,7 +710,7 @@ export const DESTINATIONS = [
   {
     id: 'd60',
     name: 'Jamaica',
-    image: 'https://images.unsplash.com/photo-1545389336-cf090694435e?w=800&q=80',
+    image: 'https://afar.brightspotcdn.com/dims4/default/4ddf9bb/2147483647/strip/true/crop/3000x1592+0+0/resize/1440x764!/quality/90/?url=https%3A%2F%2Fk3-prod-afar-media.s3.us-west-2.amazonaws.com%2Fbrightspot%2Ff3%2F5b%2F095839a54196aba1ffc7d0b70ab4%2Ftravelguides-jamaica-deanfikar-shutterstock.jpg',
     description: 'Reggae vibes, Dunn\'s River Falls, jerk chicken, and laid-back Caribbean spirit.',
     price: '$700 - $1,200',
     priceLevel: 1,
@@ -926,7 +926,7 @@ export const DESTINATIONS = [
   {
     id: 'd78',
     name: 'Palermo, Sicily',
-    image: 'https://images.unsplash.com/photo-1498307833015-e7b400441eb8?w=800&q=80',
+    image: 'https://wearepalermo.com/wp-content/uploads/2025/03/cafalu-why-to-visit-1024x690.jpg',
     description: 'Street food, Norman palaces, Mafia history, and Sicilian intensity.',
     price: '$700 - $1,100',
     priceLevel: 1,
@@ -998,7 +998,7 @@ export const DESTINATIONS = [
   {
     id: 'd84',
     name: 'St. Lucia',
-    image: 'https://images.unsplash.com/photo-1500759285222-a95626b934cb?w=800&q=80',
+    image: 'https://www.stlucia.org/wp-content/uploads/2019/04/sms-preview.jpg',
     description: 'Piton peaks, volcanic springs, cocoa plantations, and lush Caribbean beauty.',
     price: '$1,200 - $2,000',
     priceLevel: 3,
