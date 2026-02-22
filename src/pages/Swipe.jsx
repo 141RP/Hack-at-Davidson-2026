@@ -1,21 +1,52 @@
 import { useState, useRef, useMemo } from 'react'
 import { useApp } from '../context/AppContext'
 
+const PRICE_FILTERS = [
+  { label: 'All Prices', value: 0 },
+  { label: 'Budget', value: 1 },
+  { label: 'Mid-Range', value: 2 },
+  { label: 'Premium', value: 3 },
+  { label: 'Luxury', value: 4 },
+]
+
+const REGION_FILTERS = ['All Regions', 'Europe', 'Asia', 'Americas', 'Africa & Middle East', 'Oceania', 'Caribbean']
+
 export default function Swipe() {
-  const { currentDestination, swipe, currentDestIdx, totalDestinations, swipeResults, destinations, friends, users, friendSwipes } = useApp()
+  const { swipe, swipeResults, destinations, friends, users, friendSwipes } = useApp()
   const [dragX, setDragX] = useState(0)
   const [isDragging, setIsDragging] = useState(false)
   const [exitDirection, setExitDirection] = useState(null)
   const startX = useRef(0)
-
-  const unlikedDests = useMemo(() => {
-    return destinations.filter(d => swipeResults[d.id] === 'left')
-  }, [destinations, swipeResults])
-
   const [recycleIdx, setRecycleIdx] = useState(0)
 
-  const showRecycled = !currentDestination && unlikedDests.length > 0
-  const displayDest = currentDestination || (showRecycled ? unlikedDests[recycleIdx % unlikedDests.length] : null)
+  const [priceFilter, setPriceFilter] = useState(0)
+  const [regionFilter, setRegionFilter] = useState('All Regions')
+  const [showFilters, setShowFilters] = useState(false)
+
+  const hasFilters = priceFilter !== 0 || regionFilter !== 'All Regions'
+
+  const filtered = useMemo(() => {
+    return destinations.filter(d => {
+      if (priceFilter && d.priceLevel !== priceFilter) return false
+      if (regionFilter !== 'All Regions' && d.region !== regionFilter) return false
+      return true
+    })
+  }, [destinations, priceFilter, regionFilter])
+
+  const nextUnswiped = useMemo(() => {
+    return filtered.find(d => !swipeResults[d.id])
+  }, [filtered, swipeResults])
+
+  const unlikedFiltered = useMemo(() => {
+    return filtered.filter(d => swipeResults[d.id] === 'left')
+  }, [filtered, swipeResults])
+
+  const showRecycled = !nextUnswiped && unlikedFiltered.length > 0
+  const displayDest = nextUnswiped || (showRecycled ? unlikedFiltered[recycleIdx % unlikedFiltered.length] : null)
+
+  const swipedCount = useMemo(() => {
+    return filtered.filter(d => swipeResults[d.id]).length
+  }, [filtered, swipeResults])
 
   const friendsWhoLiked = useMemo(() => {
     if (!displayDest) return []
@@ -26,12 +57,28 @@ export default function Swipe() {
   }, [displayDest, friends, friendSwipes, users])
 
   if (!displayDest) {
-    const rightSwipes = Object.entries(swipeResults).filter(([, dir]) => dir === 'right')
+    const rightSwipes = Object.entries(swipeResults)
+      .filter(([, dir]) => dir === 'right')
+      .filter(([destId]) => !hasFilters || filtered.some(d => d.id === destId))
     return (
       <div className="max-w-lg mx-auto px-4 pt-8 text-center">
-        <div className="text-6xl mb-4">🎉</div>
+        <FilterBar
+          priceFilter={priceFilter}
+          setPriceFilter={setPriceFilter}
+          regionFilter={regionFilter}
+          setRegionFilter={setRegionFilter}
+          showFilters={showFilters}
+          setShowFilters={setShowFilters}
+          hasFilters={hasFilters}
+          filteredCount={filtered.length}
+        />
+        <div className="text-6xl mb-4 mt-6">🎉</div>
         <h2 className="text-2xl font-bold mb-2">All caught up!</h2>
-        <p className="text-text-secondary mb-6">You've swiped through all destinations</p>
+        <p className="text-text-secondary mb-6">
+          {hasFilters
+            ? `You've swiped through all matching destinations (${filtered.length} total)`
+            : "You've swiped through all destinations"}
+        </p>
         {rightSwipes.length > 0 && (
           <div className="text-left">
             <h3 className="font-semibold text-lg mb-3">Your picks:</h3>
@@ -101,12 +148,23 @@ export default function Swipe() {
 
   return (
     <div className="max-w-lg mx-auto px-4 pt-4 md:pt-6 flex flex-col items-center">
-      <div className="w-full flex items-center justify-between mb-4">
+      <div className="w-full flex items-center justify-between mb-2">
         <h1 className="text-xl font-bold">Explore</h1>
         <span className="text-sm text-text-secondary">
-          {showRecycled ? 'Previously passed' : `${currentDestIdx + 1} / ${totalDestinations}`}
+          {showRecycled ? 'Previously passed' : `${swipedCount + 1} / ${filtered.length}`}
         </span>
       </div>
+
+      <FilterBar
+        priceFilter={priceFilter}
+        setPriceFilter={setPriceFilter}
+        regionFilter={regionFilter}
+        setRegionFilter={setRegionFilter}
+        showFilters={showFilters}
+        setShowFilters={setShowFilters}
+        hasFilters={hasFilters}
+        filteredCount={filtered.length}
+      />
 
       <div
         onPointerDown={handlePointerDown}
@@ -118,7 +176,7 @@ export default function Swipe() {
           transition: isDragging ? 'none' : 'transform 0.3s ease',
           touchAction: 'none',
         }}
-        className="relative w-full aspect-[3/4] max-h-[65vh] rounded-3xl overflow-hidden shadow-xl cursor-grab active:cursor-grabbing select-none"
+        className="relative w-full aspect-[3/4] max-h-[60vh] rounded-3xl overflow-hidden shadow-xl cursor-grab active:cursor-grabbing select-none mt-2"
       >
         <img
           src={displayDest.image}
@@ -190,6 +248,81 @@ export default function Swipe() {
           </svg>
         </button>
       </div>
+    </div>
+  )
+}
+
+function FilterBar({ priceFilter, setPriceFilter, regionFilter, setRegionFilter, showFilters, setShowFilters, hasFilters, filteredCount }) {
+  return (
+    <div className="w-full mb-1">
+      <button
+        onClick={() => setShowFilters(!showFilters)}
+        className="flex items-center gap-2 text-sm font-medium text-text-secondary hover:text-text-primary transition cursor-pointer"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4.5 h-4.5">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75" />
+        </svg>
+        Filters
+        {hasFilters && (
+          <span className="px-1.5 py-0.5 bg-primary/15 text-amber-700 rounded-md text-xs font-semibold">
+            {filteredCount}
+          </span>
+        )}
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className={`w-3.5 h-3.5 transition-transform ${showFilters ? 'rotate-180' : ''}`}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+        </svg>
+      </button>
+
+      {showFilters && (
+        <div className="mt-3 p-4 bg-surface-dim rounded-2xl border border-gray-100 space-y-3">
+          <div>
+            <label className="text-xs font-semibold text-text-secondary uppercase tracking-wide mb-1.5 block">Price</label>
+            <div className="flex flex-wrap gap-1.5">
+              {PRICE_FILTERS.map(p => (
+                <button
+                  key={p.value}
+                  onClick={() => setPriceFilter(p.value)}
+                  className={`px-3 py-1.5 rounded-full text-xs font-medium transition cursor-pointer ${
+                    priceFilter === p.value
+                      ? 'bg-primary text-gray-900'
+                      : 'bg-white border border-gray-200 text-text-secondary hover:border-gray-300'
+                  }`}
+                >
+                  {p.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <label className="text-xs font-semibold text-text-secondary uppercase tracking-wide mb-1.5 block">Region</label>
+            <div className="flex flex-wrap gap-1.5">
+              {REGION_FILTERS.map(r => (
+                <button
+                  key={r}
+                  onClick={() => setRegionFilter(r)}
+                  className={`px-3 py-1.5 rounded-full text-xs font-medium transition cursor-pointer ${
+                    regionFilter === r
+                      ? 'bg-primary text-gray-900'
+                      : 'bg-white border border-gray-200 text-text-secondary hover:border-gray-300'
+                  }`}
+                >
+                  {r}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {hasFilters && (
+            <button
+              onClick={() => { setPriceFilter(0); setRegionFilter('All Regions') }}
+              className="text-xs font-medium text-amber-700 hover:text-amber-800 transition cursor-pointer"
+            >
+              Clear all filters
+            </button>
+          )}
+        </div>
+      )}
     </div>
   )
 }
