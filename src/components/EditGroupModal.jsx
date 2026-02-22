@@ -141,7 +141,7 @@ export default function EditGroupModal({ conversation, onClose }) {
                     <p className="text-sm font-medium truncate">{u.name}</p>
                     <p className="text-xs text-text-secondary truncate">{u.email}</p>
                   </div>
-                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-amber-700">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                     </svg>
@@ -156,7 +156,7 @@ export default function EditGroupModal({ conversation, onClose }) {
           <button
             onClick={handleSave}
             disabled={saving || members.length === 0}
-            className="w-full py-3.5 bg-primary text-white rounded-2xl font-semibold hover:bg-primary-dark transition disabled:opacity-40 cursor-pointer"
+            className="w-full py-3.5 bg-primary text-gray-900 rounded-2xl font-semibold hover:bg-primary-dark transition disabled:opacity-40 cursor-pointer"
           >
             {saving ? 'Saving...' : 'Save Changes'}
           </button>

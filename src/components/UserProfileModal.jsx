@@ -97,7 +97,7 @@ export default function UserProfileModal({ userId, onClose }) {
                   Liked Destinations ({likedDests.length})
                 </h4>
                 {!isOwnProfile && commonCount > 0 && (
-                  <span className="text-xs font-medium text-primary bg-primary/10 px-2.5 py-1 rounded-full">
+                  <span className="text-xs font-medium text-amber-700 bg-primary/10 px-2.5 py-1 rounded-full">
                     {commonCount} in common
                   </span>
                 )}
@@ -118,7 +118,7 @@ export default function UserProfileModal({ userId, onClose }) {
                             <div className="flex items-center gap-1.5">
                               <p className="text-sm font-semibold truncate">{dest.name}</p>
                               {isCommon && (
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5 text-primary flex-shrink-0">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5 text-amber-700 flex-shrink-0">
                                   <path fillRule="evenodd" d="M8.603 3.799A4.49 4.49 0 0112 2.25c1.357 0 2.573.6 3.397 1.549a4.49 4.49 0 013.498 1.307 4.491 4.491 0 011.307 3.497A4.49 4.49 0 0121.75 12a4.49 4.49 0 01-1.549 3.397 4.491 4.491 0 01-1.307 3.497 4.491 4.491 0 01-3.497 1.307A4.49 4.49 0 0112 21.75a4.49 4.49 0 01-3.397-1.549 4.49 4.49 0 01-3.498-1.306 4.491 4.491 0 01-1.307-3.498A4.49 4.49 0 012.25 12c0-1.357.6-2.573 1.549-3.397a4.49 4.49 0 011.307-3.497 4.49 4.49 0 013.497-1.307zm7.007 6.387a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z" clipRule="evenodd" />
                                 </svg>
                               )}
@@ -138,7 +138,7 @@ export default function UserProfileModal({ userId, onClose }) {
                   {!isOwnProfile && sortedDests.length > 5 && (
                     <button
                       onClick={() => setShowAll(prev => !prev)}
-                      className="w-full mt-3 py-2.5 text-sm font-medium text-primary hover:bg-primary/5 rounded-2xl transition cursor-pointer"
+                      className="w-full mt-3 py-2.5 text-sm font-medium text-amber-700 hover:bg-primary/5 rounded-2xl transition cursor-pointer"
                     >
                       {showAll ? 'Show Less' : `Show All (${sortedDests.length})`}
                     </button>

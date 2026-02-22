@@ -26,6 +26,7 @@ export function AppProvider({ children }) {
   const [friends, setFriends] = useState([])
   const [incomingRequests, setIncomingRequests] = useState([])
   const [sentRequests, setSentRequests] = useState([])
+  const [notifications, setNotifications] = useState([])
 
   useEffect(() => {
     if (user) {
@@ -141,6 +142,24 @@ export function AppProvider({ children }) {
     })
     return unsub
   }, [user])
+
+  useEffect(() => {
+    if (!user) return
+    const q = query(
+      collection(db, 'notifications'),
+      where('userId', '==', user.id),
+      where('read', '==', false),
+      orderBy('time', 'desc'),
+    )
+    const unsub = onSnapshot(q, (snapshot) => {
+      setNotifications(snapshot.docs.map(d => ({ id: d.id, ...d.data() })))
+    })
+    return unsub
+  }, [user])
+
+  const dismissNotification = useCallback(async (notificationId) => {
+    await updateDoc(doc(db, 'notifications', notificationId), { read: true })
+  }, [])
 
   const sendFriendRequest = useCallback(async (targetUserId) => {
     if (!user) return
@@ -277,15 +296,30 @@ export function AppProvider({ children }) {
       }
     }
 
+    const now = Date.now()
     const ref = await addDoc(collection(db, 'conversations'), {
       name: name || '',
       type,
       members: allMembers,
       lastMessageText: '',
       lastMessageSender: '',
-      lastMessageTime: Date.now(),
-      createdAt: Date.now(),
+      lastMessageTime: now,
+      createdAt: now,
     })
+    if (type === 'group') {
+      const othersToNotify = allMembers.filter(id => id !== user.id && id !== GEMINI_USER_ID)
+      for (const memberId of othersToNotify) {
+        addDoc(collection(db, 'notifications'), {
+          type: 'group_added',
+          userId: memberId,
+          fromUserId: user.id,
+          conversationId: ref.id,
+          groupName: name || 'Group Chat',
+          time: now,
+          read: false,
+        })
+      }
+    }
     return ref.id
   }, [user])
 
@@ -295,7 +329,20 @@ export function AppProvider({ children }) {
       direction,
       timestamp: Date.now(),
     })
-  }, [user])
+    if (direction === 'right') {
+      const friendsWhoLiked = friends.filter(fid => friendSwipes[fid]?.[destinationId] === 'right')
+      for (const fid of friendsWhoLiked) {
+        addDoc(collection(db, 'notifications'), {
+          type: 'trip_match',
+          userId: fid,
+          fromUserId: user.id,
+          destinationId,
+          time: Date.now(),
+          read: false,
+        })
+      }
+    }
+  }, [user, friends, friendSwipes])
 
   const removeSwipe = useCallback(async (destinationId) => {
     if (!user) return
@@ -334,6 +381,8 @@ export function AppProvider({ children }) {
       getUserFriends,
       friendSwipes,
       tripMatches,
+      notifications,
+      dismissNotification,
     }}>
       {children}
     </AppContext.Provider>

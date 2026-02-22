@@ -4,7 +4,7 @@ export default function Login() {
   const { login } = useAuth()
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 p-6">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-primary via-primary-dark to-accent p-6">
       <div className="bg-white rounded-3xl shadow-2xl p-8 sm:p-12 max-w-md w-full text-center">
         <img src="/explor-logo.png" alt="EXPLOR" className="h-16 mx-auto mb-4" />
         <p className="text-text-secondary text-lg mb-8">

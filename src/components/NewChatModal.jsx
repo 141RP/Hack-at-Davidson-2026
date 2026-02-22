@@ -89,10 +89,10 @@ export default function NewChatModal({ onClose, onOpenChat }) {
                 {members.map(m => (
                   <div key={m.id} className="flex items-center gap-1.5 pl-1 pr-2.5 py-1 bg-primary/10 rounded-full">
                     <img src={m.avatar} alt="" className="w-6 h-6 rounded-full bg-gray-200" referrerPolicy="no-referrer" />
-                    <span className="text-xs font-medium text-primary">{m.name.split(' ')[0]}</span>
+                    <span className="text-xs font-medium text-amber-700">{m.name.split(' ')[0]}</span>
                     <button
                       onClick={() => removeMember(m.id)}
-                      className="ml-0.5 text-primary/50 hover:text-primary transition cursor-pointer"
+                      className="ml-0.5 text-amber-700/50 hover:text-amber-700 transition cursor-pointer"
                     >
                       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-3.5 h-3.5">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -143,7 +143,7 @@ export default function NewChatModal({ onClose, onOpenChat }) {
                     <p className="text-sm font-medium truncate">{u.name}</p>
                     <p className="text-xs text-text-secondary truncate">{u.email}</p>
                   </div>
-                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-amber-700">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                     </svg>
@@ -159,7 +159,7 @@ export default function NewChatModal({ onClose, onOpenChat }) {
           <button
             onClick={handleCreate}
             disabled={members.length === 0 || creating}
-            className="w-full py-3.5 bg-primary text-white rounded-2xl font-semibold hover:bg-primary-dark transition disabled:opacity-40 cursor-pointer"
+            className="w-full py-3.5 bg-primary text-gray-900 rounded-2xl font-semibold hover:bg-primary-dark transition disabled:opacity-40 cursor-pointer"
           >
             {creating ? 'Creating...' : members.length === 0 ? 'Add people to start' : `Create Chat${members.length > 1 || groupName.trim() ? ' Group' : ''}`}
           </button>

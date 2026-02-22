@@ -54,10 +54,10 @@ const navItems = [
 
 export default function Navbar() {
   const { user } = useAuth()
-  const { incomingRequests } = useApp()
+  const { incomingRequests, notifications } = useApp()
   if (!user) return null
 
-  const badgeCount = incomingRequests.length
+  const badgeCount = incomingRequests.length + notifications.length
 
   return (
     <>
@@ -73,7 +73,7 @@ export default function Navbar() {
               className={({ isActive }) =>
                 `relative flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all ${
                   isActive
-                    ? 'bg-primary/10 text-primary'
+                    ? 'bg-primary/10 text-amber-700'
                     : 'text-text-secondary hover:bg-gray-100 hover:text-text-primary'
                 }`
               }
@@ -102,7 +102,7 @@ export default function Navbar() {
               className={({ isActive }) =>
                 `relative flex flex-col items-center gap-0.5 px-2 py-1.5 rounded-xl text-[10px] font-medium transition-all ${
                   isActive
-                    ? 'text-primary'
+                    ? 'text-amber-700'
                     : 'text-text-secondary'
                 }`
               }

@@ -107,7 +107,7 @@ export default function Friends() {
                       <button
                         onClick={() => handleAdd(u.id)}
                         disabled={sending === u.id}
-                        className="px-3 py-1.5 bg-primary text-white text-xs font-semibold rounded-full hover:bg-primary-dark transition disabled:opacity-50 cursor-pointer"
+                        className="px-3 py-1.5 bg-primary text-gray-900 text-xs font-semibold rounded-full hover:bg-primary-dark transition disabled:opacity-50 cursor-pointer"
                       >
                         {sending === u.id ? '...' : 'Add Friend'}
                       </button>
@@ -135,7 +135,7 @@ export default function Friends() {
                     <button onClick={() => setViewUser(u)} className="flex-1 min-w-0 text-left cursor-pointer">
                       <p className="text-sm font-semibold truncate">{u.name}</p>
                       {u.mutualCount > 0 ? (
-                        <p className="text-xs text-primary font-medium">{u.mutualCount} mutual friend{u.mutualCount !== 1 ? 's' : ''}</p>
+                        <p className="text-xs text-amber-700 font-medium">{u.mutualCount} mutual friend{u.mutualCount !== 1 ? 's' : ''}</p>
                       ) : (
                         <p className="text-xs text-text-secondary truncate">{u.email}</p>
                       )}
@@ -143,7 +143,7 @@ export default function Friends() {
                     <button
                       onClick={() => handleAdd(u.id)}
                       disabled={sending === u.id}
-                      className="px-3 py-1.5 bg-primary text-white text-xs font-semibold rounded-full hover:bg-primary-dark transition disabled:opacity-50 cursor-pointer"
+                      className="px-3 py-1.5 bg-primary text-gray-900 text-xs font-semibold rounded-full hover:bg-primary-dark transition disabled:opacity-50 cursor-pointer"
                     >
                       {sending === u.id ? '...' : 'Add Friend'}
                     </button>

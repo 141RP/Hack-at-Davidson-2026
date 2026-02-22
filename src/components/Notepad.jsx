@@ -195,7 +195,7 @@ export default function Notepad({ conversationId, onClose }) {
                       <button
                         onClick={() => handleSaveEdit(note.id)}
                         disabled={saving}
-                        className="px-3 py-1.5 text-xs font-medium bg-primary text-white rounded-lg hover:bg-primary-dark transition disabled:opacity-40 cursor-pointer"
+                        className="px-3 py-1.5 text-xs font-medium bg-primary text-gray-900 rounded-lg hover:bg-primary-dark transition disabled:opacity-40 cursor-pointer"
                       >
                         {saving ? 'Saving...' : 'Save'}
                       </button>

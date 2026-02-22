@@ -49,7 +49,7 @@ export default function Home() {
         </div>
         <button
           onClick={() => setShowNewChat(true)}
-          className="p-2.5 rounded-2xl bg-primary text-white hover:bg-primary-dark transition cursor-pointer"
+          className="p-2.5 rounded-2xl bg-primary text-gray-900 hover:bg-primary-dark transition cursor-pointer"
         >
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -86,7 +86,7 @@ export default function Home() {
                   <p className="text-xs text-text-secondary">Tap to see destinations your friends also liked</p>
                 </div>
               </div>
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 text-primary flex-shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 text-amber-700 flex-shrink-0">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
               </svg>
             </button>
@@ -96,7 +96,7 @@ export default function Home() {
                 <h2 className="text-xs font-semibold text-text-secondary uppercase tracking-wide">Trip Matches ({visibleMatches.length})</h2>
                 <button
                   onClick={() => setShowMatches(false)}
-                  className="text-xs font-medium text-primary hover:text-primary-dark transition cursor-pointer"
+                  className="text-xs font-medium text-amber-700 hover:text-amber-800 transition cursor-pointer"
                 >
                   Hide
                 </button>
@@ -129,7 +129,7 @@ export default function Home() {
                           className="w-14 h-14 rounded-xl object-cover flex-shrink-0"
                         />
                         <div className="flex-1 min-w-0 pr-6">
-                          <p className="text-xs font-semibold text-primary uppercase tracking-wide">Trip Match!</p>
+                          <p className="text-xs font-semibold text-amber-700 uppercase tracking-wide">Trip Match!</p>
                           <p className="text-sm font-bold text-text-primary truncate">{match.destination.name}</p>
                           <p className="text-xs text-text-secondary mt-0.5">
                             You and {nameStr} all liked this
@@ -160,7 +160,7 @@ export default function Home() {
                             }
                           }}
                           disabled={creatingMatch === match.destination.id}
-                          className="ml-auto px-4 py-2 bg-primary text-white text-xs font-semibold rounded-xl hover:bg-primary-dark transition disabled:opacity-50 cursor-pointer"
+                          className="ml-auto px-4 py-2 bg-primary text-gray-900 text-xs font-semibold rounded-xl hover:bg-primary-dark transition disabled:opacity-50 cursor-pointer"
                         >
                           {creatingMatch === match.destination.id ? 'Creating...' : 'Plan Trip'}
                         </button>
@@ -188,7 +188,7 @@ export default function Home() {
           <p className="text-sm text-text-secondary mb-4">Start a chat to plan your next trip!</p>
           <button
             onClick={() => setShowNewChat(true)}
-            className="px-6 py-3 bg-primary text-white rounded-2xl font-medium hover:bg-primary-dark transition cursor-pointer"
+            className="px-6 py-3 bg-primary text-gray-900 rounded-2xl font-medium hover:bg-primary-dark transition cursor-pointer"
           >
             New Chat
           </button>

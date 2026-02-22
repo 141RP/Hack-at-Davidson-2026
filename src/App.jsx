@@ -33,9 +33,9 @@ function AuthenticatedApp() {
 
 function LoadingScreen() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary via-primary-dark to-accent">
       <div className="text-center text-white">
-        <div className="text-5xl mb-4 animate-bounce">🧳</div>
+        <img src="/explor-logo.png" alt="EXPLOR" className="h-12 mx-auto mb-4 animate-bounce" />
         <p className="text-lg font-medium opacity-80">Loading...</p>
       </div>
     </div>

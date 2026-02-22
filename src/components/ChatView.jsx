@@ -178,7 +178,7 @@ export default function ChatView({ conversation, onBack }) {
         ) : messages.length === 0 ? (
           <div className="text-center py-10">
             <p className="text-sm text-text-secondary">No messages yet. Say hello!</p>
-            <p className="text-xs text-text-secondary mt-1">Try <span className="font-medium text-primary">@Gemini</span> followed by a travel question</p>
+            <p className="text-xs text-text-secondary mt-1">Try <span className="font-medium text-amber-700">@Gemini</span> followed by a travel question</p>
           </div>
         ) : (
           messages.map(msg => {
@@ -203,7 +203,7 @@ export default function ChatView({ conversation, onBack }) {
                   )}
                   <div className={`px-4 py-2.5 rounded-2xl text-sm leading-relaxed ${
                     isMe
-                      ? 'bg-primary text-white rounded-br-md'
+                      ? 'bg-accent text-white rounded-br-md'
                       : isGemini
                       ? 'bg-gradient-to-br from-blue-50 to-indigo-50 text-text-primary rounded-bl-md border border-blue-100'
                       : 'bg-gray-100 text-text-primary rounded-bl-md'
@@ -250,7 +250,7 @@ export default function ChatView({ conversation, onBack }) {
         <button
           type="submit"
           disabled={!text.trim()}
-          className="p-3 rounded-2xl bg-primary text-white disabled:opacity-30 hover:bg-primary-dark transition cursor-pointer"
+          className="p-3 rounded-2xl bg-primary text-gray-900 disabled:opacity-30 hover:bg-primary-dark transition cursor-pointer"
         >
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
             <path d="M3.478 2.405a.75.75 0 00-.926.94l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.405z" />

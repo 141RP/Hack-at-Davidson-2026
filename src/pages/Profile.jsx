@@ -26,7 +26,7 @@ export default function Profile() {
 
   return (
     <div className="max-w-lg mx-auto px-4 pt-4 md:pt-6 pb-24">
-      <div className="bg-gradient-to-br from-primary to-primary-dark rounded-3xl p-6 text-white mb-6">
+      <div className="bg-gradient-to-br from-accent to-accent-dark rounded-3xl p-6 text-white mb-6">
         <div className="flex items-center gap-4">
           <img src={user.avatar} alt="" className="w-16 h-16 rounded-2xl bg-white/20 border-2 border-white/30" referrerPolicy="no-referrer" />
           <div>
@@ -63,7 +63,7 @@ export default function Profile() {
           {!editingBio && (
             <button
               onClick={() => setEditingBio(true)}
-              className="text-xs font-medium text-primary hover:text-primary-dark transition cursor-pointer"
+              className="text-xs font-medium text-amber-700 hover:text-amber-800 transition cursor-pointer"
             >
               Edit
             </button>
@@ -91,7 +91,7 @@ export default function Profile() {
                 <button
                   onClick={handleSaveBio}
                   disabled={savingBio}
-                  className="px-3 py-1.5 text-xs font-medium bg-primary text-white rounded-lg hover:bg-primary-dark transition disabled:opacity-50 cursor-pointer"
+                  className="px-3 py-1.5 text-xs font-medium bg-primary text-gray-900 rounded-lg hover:bg-primary-dark transition disabled:opacity-50 cursor-pointer"
                 >
                   {savingBio ? 'Saving...' : 'Save'}
                 </button>
@@ -145,7 +145,7 @@ export default function Profile() {
           {rightSwipes.length > 3 && (
             <button
               onClick={() => setShowLiked(!showLiked)}
-              className="w-full mt-2 py-2 text-sm font-medium text-primary hover:text-primary-dark transition cursor-pointer"
+              className="w-full mt-2 py-2 text-sm font-medium text-amber-700 hover:text-amber-800 transition cursor-pointer"
             >
               {showLiked ? 'Show Less' : `Show All (${rightSwipes.length - 3} more)`}
             </button>
